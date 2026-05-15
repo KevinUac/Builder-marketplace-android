@@ -45,6 +45,25 @@ La aplicación maneja flujos lógicos y de UI completamente distintos basados en
 
 ---
 
+## 🚶‍♂️ User Journeys (Cómo funciona la App)
+
+Builder está dividida internamente en dos aplicaciones que conviven bajo el mismo código, dependiendo del tipo de cuenta con la que te registres.
+
+### 👤 Experiencia del Cliente (Usuario)
+1. **Descubrimiento:** Al iniciar sesión, el cliente es recibido por un *Dashboard* con categorías de servicios (Plomería, Limpieza, etc.) y una lista horizontal de proveedores recomendados y cercanos.
+2. **Búsqueda en Mapa:** Si el cliente necesita alguien urgente, puede abrir el **Mapa Interactivo**. El sistema detecta su ubicación y le muestra pines con los proveedores disponibles a su alrededor en tiempo real.
+3. **Contratación:** Al seleccionar a un proveedor, el cliente ve su perfil detallado, tarifa por hora, portafolio de fotos y reseñas. Puede enviar una **Solicitud de Servicio** con una descripción del problema. Un overlay animado le confirmará que la solicitud fue enviada.
+4. **Seguimiento:** En la pestaña de *Historial*, el cliente verá su servicio como *"Pendiente"*. Cuando el proveedor acepte, el estado cambiará automáticamente a *"En Progreso"*.
+5. **Comunicación:** El cliente puede abrir el **Chat** integrado para enviar mensajes directos al proveedor, negociar precios o enviar detalles extra antes de que llegue a su domicilio.
+
+### 👷‍♂️ Experiencia del Proveedor
+1. **Onboarding:** Al registrarse, el proveedor pasa por una pantalla especial para "Completar su Perfil". Aquí define su tarifa, sube fotos de sus trabajos anteriores, e interactivamente **otorga permisos de GPS** para que la app capture sus coordenadas exactas y lo posicione en el mapa de los clientes.
+2. **Recepción de Solicitudes:** Su pantalla principal es un panel de control. No necesita buscar clientes; él simplemente recibe las solicitudes entrantes.
+3. **Gestión Operativa:** En su *Historial*, verá las solicitudes nuevas. Tendrá botones prominentes de **Aceptar** o **Rechazar**. 
+4. **Ejecución:** Si acepta, se le habilita la opción de chatear con el cliente. Una vez que termina el trabajo físico en la vida real, el proveedor presiona **"Marcar Completado"** en la app, cerrando el ciclo del servicio.
+
+---
+
 ## 🎨 UI/UX Design System
 
 La aplicación se construyó siguiendo un enfoque de diseño **Minimalista Premium (Dark Mode First)**, alejándose de las interfaces genéricas para ofrecer una experiencia de nivel *flagship*.
