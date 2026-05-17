@@ -24,6 +24,12 @@ import com.google.maps.android.compose.*
 import androidx.compose.ui.platform.LocalContext
 import android.content.pm.PackageManager
 import androidx.compose.ui.graphics.Color
+import android.content.Intent
+import android.net.Uri
+import com.builder.app.domain.model.Proveedor
+import com.builder.app.presentation.common.BuilderAvatar
+import com.builder.app.presentation.common.BuilderButton
+import com.builder.app.presentation.common.BuilderRatingStars
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -46,6 +52,8 @@ fun MapScreen(
             }
         }
     )
+
+    var selectedProvider by remember { mutableStateOf<Proveedor?>(null) }
 
     LaunchedEffect(Unit) {
         locationPermissionState.launchMultiplePermissionRequest()
@@ -94,6 +102,10 @@ fun MapScreen(
                     state = MarkerState(position = LatLng(provider.latitud, provider.longitud)),
                     title = provider.nombre,
                     snippet = "${provider.categoria} · $${provider.tarifaHora}/h",
+                    onClick = {
+                        selectedProvider = provider
+                        false
+                    },
                     onInfoWindowClick = {
                         onProviderClick(provider.uid)
                     }
@@ -202,6 +214,68 @@ fun MapScreen(
             shape = CircleShape
         ) {
             Icon(Icons.Rounded.MyLocation, "Mi ubicación", modifier = Modifier.size(24.dp))
+        }
+    }
+
+    // Provider Details Bottom Sheet
+    if (selectedProvider != null) {
+        val provider = selectedProvider!!
+        ModalBottomSheet(
+            onDismissRequest = { selectedProvider = null },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+            dragHandle = { BottomSheetDefaults.DragHandle() }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = 8.dp)
+                    .padding(bottom = 32.dp)
+            ) {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    BuilderAvatar(name = provider.nombre, size = 64.dp, imageUrl = provider.fotoUrl)
+                    Spacer(Modifier.width(16.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(provider.nombre, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = TextPrimary)
+                        Text(provider.categoria, style = MaterialTheme.typography.bodyMedium, color = Accent, fontWeight = FontWeight.Medium)
+                        Spacer(Modifier.height(4.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            BuilderRatingStars(rating = provider.calificacion, size = 16.dp)
+                            Spacer(Modifier.width(8.dp))
+                            Text("$${provider.tarifaHora}/h", style = MaterialTheme.typography.labelMedium, color = TextSecondary)
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(24.dp))
+
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    // Navigation Button
+                    BuilderButton(
+                        text = "Cómo llegar",
+                        onClick = {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=${provider.latitud},${provider.longitud}"))
+                            context.startActivity(intent)
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    // Profile Button
+                    Surface(
+                        modifier = Modifier.weight(1f).height(48.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        color = Neutral50,
+                        onClick = {
+                            selectedProvider = null
+                            onProviderClick(provider.uid)
+                        }
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Text("Ver Perfil", color = TextPrimary, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelLarge)
+                        }
+                    }
+                }
+            }
         }
     }
 }
