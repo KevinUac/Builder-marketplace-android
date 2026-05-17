@@ -56,8 +56,13 @@ class HomeViewModel @Inject constructor(
             val user = authRepository.getSession().first()
             if (user?.rol == RolUsuario.PROVEEDOR) {
                 providerRepository.getProviderProfile(user.uid).collect { resource ->
-                    if (resource is com.builder.app.core.utils.Resource.Success && resource.data == null) {
-                        _needsProfile.value = true
+                    if (resource is com.builder.app.core.utils.Resource.Success) {
+                        val prov = resource.data
+                        if (prov == null || prov.categoria.isBlank() || prov.tarifaHora <= 0.0) {
+                            _needsProfile.value = true
+                        } else {
+                            _needsProfile.value = false
+                        }
                     }
                 }
             }

@@ -53,10 +53,21 @@ class CreateProfileViewModel @Inject constructor(
                 }
             }
 
-            // 3. Guardar perfil con ubicación real
+            // 3. Obtener perfil existente si lo hay
+            val existingResource = providerRepository.getProviderProfile(user.uid).first()
+            val existingProv = if (existingResource is Resource.Success) existingResource.data else null
+
+            // 4. Guardar perfil con ubicación real
             val habilidadesList = habilidades.split(",").map { it.trim() }.filter { it.isNotEmpty() }
             
-            val proveedor = Proveedor(
+            val proveedor = existingProv?.copy(
+                categoria = categoria,
+                tarifaHora = tarifa,
+                habilidades = habilidadesList,
+                portafolioUrls = uploadedUrls,
+                latitud = lat,
+                longitud = lng
+            ) ?: Proveedor(
                 uid = user.uid,
                 nombre = user.nombre,
                 categoria = categoria,
