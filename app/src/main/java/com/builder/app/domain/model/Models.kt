@@ -40,8 +40,8 @@ data class Proveedor(
     val longitud: Double = 0.0,
     val geohash: String? = null,
     val fotoUrl: String = "",
-    val likes: Int = 0,
-    val dislikes: Int = 0,
+    val likedBy: List<String> = emptyList(),
+    val dislikedBy: List<String> = emptyList(),
     val telefono: String = "",
     val fechaNacimiento: String = "",
     val anosExperiencia: Int = 0

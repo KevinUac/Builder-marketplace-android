@@ -15,7 +15,8 @@ import javax.inject.Inject
 
 class ProviderRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
-    private val storage: FirebaseStorage
+    private val storage: FirebaseStorage,
+    private val auth: com.google.firebase.auth.FirebaseAuth
 ) : ProviderRepository {
 
     override fun getProviderProfile(uid: String): Flow<Resource<Proveedor?>> = flow {
@@ -137,8 +138,11 @@ class ProviderRepositoryImpl @Inject constructor(
     override fun likeProvider(providerId: String): Flow<Resource<Unit>> = flow {
         emit(Resource.Loading())
         try {
-            firestore.collection("proveedores").document(providerId)
-                .update("likes", com.google.firebase.firestore.FieldValue.increment(1)).await()
+            val uid = auth.currentUser?.uid ?: throw Exception("Usuario no autenticado")
+            firestore.collection("proveedores").document(providerId).update(
+                "likedBy", com.google.firebase.firestore.FieldValue.arrayUnion(uid),
+                "dislikedBy", com.google.firebase.firestore.FieldValue.arrayRemove(uid)
+            ).await()
             emit(Resource.Success(Unit))
         } catch (e: Exception) {
             emit(Resource.Error(e.message ?: "Error al dar me gusta"))
@@ -148,8 +152,11 @@ class ProviderRepositoryImpl @Inject constructor(
     override fun dislikeProvider(providerId: String): Flow<Resource<Unit>> = flow {
         emit(Resource.Loading())
         try {
-            firestore.collection("proveedores").document(providerId)
-                .update("dislikes", com.google.firebase.firestore.FieldValue.increment(1)).await()
+            val uid = auth.currentUser?.uid ?: throw Exception("Usuario no autenticado")
+            firestore.collection("proveedores").document(providerId).update(
+                "dislikedBy", com.google.firebase.firestore.FieldValue.arrayUnion(uid),
+                "likedBy", com.google.firebase.firestore.FieldValue.arrayRemove(uid)
+            ).await()
             emit(Resource.Success(Unit))
         } catch (e: Exception) {
             emit(Resource.Error(e.message ?: "Error al dar no me gusta"))

@@ -211,13 +211,13 @@ fun BuilderProviderCard(
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Rounded.ThumbUp, null, tint = Success, modifier = Modifier.size(14.dp))
-                        Spacer(Modifier.width(3.dp))
-                        Text("${proveedor.likes}", style = MaterialTheme.typography.labelSmall, color = Success)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("${proveedor.likedBy.size}", style = MaterialTheme.typography.labelSmall, color = Success)
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Rounded.ThumbDown, null, tint = Error, modifier = Modifier.size(14.dp))
-                        Spacer(Modifier.width(3.dp))
-                        Text("${proveedor.dislikes}", style = MaterialTheme.typography.labelSmall, color = Error)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("${proveedor.dislikedBy.size}", style = MaterialTheme.typography.labelSmall, color = Error)
                     }
                 }
             }

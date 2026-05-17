@@ -269,7 +269,7 @@ fun ProviderHomeCard(proveedor: Proveedor, onClick: () -> Unit) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Rounded.ThumbUp, null, tint = Neutral600, modifier = Modifier.size(16.dp))
                     Spacer(Modifier.width(4.dp))
-                    Text("${proveedor.likes}", style = MaterialTheme.typography.bodySmall, color = Neutral600)
+                    Text("${proveedor.likedBy.size}", style = MaterialTheme.typography.bodySmall, color = Neutral600)
                 }
 
                 Spacer(Modifier.width(12.dp))
@@ -277,7 +277,7 @@ fun ProviderHomeCard(proveedor: Proveedor, onClick: () -> Unit) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Rounded.ThumbDown, null, tint = Neutral600, modifier = Modifier.size(16.dp))
                     Spacer(Modifier.width(4.dp))
-                    Text("${proveedor.dislikes}", style = MaterialTheme.typography.bodySmall, color = Neutral600)
+                    Text("${proveedor.dislikedBy.size}", style = MaterialTheme.typography.bodySmall, color = Neutral600)
                 }
 
                 Spacer(Modifier.weight(1f))

@@ -48,6 +48,7 @@ fun ProviderProfileScreen(
     var showReviewDialog by remember { mutableStateOf(false) }
     var showServiceRequestDialog by remember { mutableStateOf(false) }
     var showSuccessOverlay by remember { mutableStateOf(false) }
+    val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
 
     LaunchedEffect(providerId) {
         viewModel.loadProviderProfile(providerId)
@@ -139,7 +140,10 @@ fun ProviderProfileScreen(
                             BuilderButton(
                                 text = "Contratar",
                                 icon = Icons.Rounded.Handshake,
-                                onClick = { showServiceRequestDialog = true },
+                                onClick = { 
+                                    haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+                                    showServiceRequestDialog = true 
+                                },
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -221,6 +225,17 @@ fun ProviderProfileContent(
                     }
                 }
                 Spacer(modifier = Modifier.height(4.dp))
+                val currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
+                val age = proveedor.fechaNacimiento.takeLast(4).toIntOrNull()?.let { currentYear - it }
+                if (age != null) {
+                    Text(
+                        text = "$age Años",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = TextPrimary
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
                 Text(
                     text = proveedor.categoria,
                     style = MaterialTheme.typography.bodyMedium,
@@ -274,13 +289,13 @@ fun ProviderProfileContent(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             BuilderButton(
-                text = "Me gusta (${proveedor.likes})",
+                text = "Me gusta ${proveedor.likedBy.size}",
                 onClick = onLikeClick,
                 modifier = Modifier.weight(1f),
                 icon = Icons.Rounded.ThumbUp
             )
             BuilderGhostButton(
-                text = "No me gusta (${proveedor.dislikes})",
+                text = "No me gusta ${proveedor.dislikedBy.size}",
                 onClick = onDislikeClick,
                 modifier = Modifier.weight(1f),
                 icon = Icons.Rounded.ThumbDown
