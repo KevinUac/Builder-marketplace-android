@@ -18,6 +18,7 @@ class UserPreferences @Inject constructor(@ApplicationContext private val contex
     private val ROLE_KEY = stringPreferencesKey("user_role")
     private val UID_KEY = stringPreferencesKey("user_uid")
     private val NAME_KEY = stringPreferencesKey("user_name")
+    private val PHOTO_KEY = stringPreferencesKey("user_photo_url")
 
     val userRole: Flow<RolUsuario?> = context.dataStore.data.map { preferences ->
         preferences[ROLE_KEY]?.let { RolUsuario.valueOf(it) }
@@ -25,12 +26,20 @@ class UserPreferences @Inject constructor(@ApplicationContext private val contex
 
     val userUid: Flow<String?> = context.dataStore.data.map { it[UID_KEY] }
     val userName: Flow<String?> = context.dataStore.data.map { it[NAME_KEY] }
+    val userPhotoUrl: Flow<String?> = context.dataStore.data.map { it[PHOTO_KEY] }
 
-    suspend fun saveUserSession(uid: String, role: RolUsuario, name: String) {
+    suspend fun saveUserSession(uid: String, role: RolUsuario, name: String, photoUrl: String = "") {
         context.dataStore.edit { preferences ->
             preferences[UID_KEY] = uid
             preferences[ROLE_KEY] = role.name
             preferences[NAME_KEY] = name
+            if (photoUrl.isNotBlank()) preferences[PHOTO_KEY] = photoUrl
+        }
+    }
+
+    suspend fun savePhotoUrl(url: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PHOTO_KEY] = url
         }
     }
 

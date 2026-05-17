@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.builder.app.core.ui.theme.*
@@ -76,14 +77,14 @@ fun HistorialScreen(
                         ) {
                             Surface(
                                 shape = RoundedCornerShape(999.dp),
-                                color = if (isSelected) Accent else DarkSurfaceElevated,
+                                color = if (isSelected) Accent else Color.White,
                                 border = if (!isSelected) BorderStroke(1.dp, DarkBorder) else null
                             ) {
                                 Text(
                                     text = title,
                                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                                     style = MaterialTheme.typography.labelLarge,
-                                    color = if (isSelected) TextPrimary else TextSecondary,
+                                    color = if (isSelected) Color.White else TextSecondary,
                                     fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
                                 )
                             }
@@ -153,9 +154,9 @@ fun ServicioItem(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = DarkSurfaceElevated),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         border = BorderStroke(1.dp, DarkBorder),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(Modifier.padding(20.dp)) {
             // Header

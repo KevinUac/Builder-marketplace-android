@@ -21,13 +21,35 @@ class ProviderListViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<List<Proveedor>>>(UiState.Idle)
     val uiState: StateFlow<UiState<List<Proveedor>>> = _uiState
 
+    private val _sortByRating = MutableStateFlow(false)
+    val sortByRating: StateFlow<Boolean> = _sortByRating
+
+    private var currentProviders: List<Proveedor> = emptyList()
+
     fun loadProviders(category: String) {
         providerRepository.getProvidersByCategory(category).onEach { result ->
             when (result) {
                 is Resource.Loading -> _uiState.value = UiState.Loading
-                is Resource.Success -> _uiState.value = UiState.Success(result.data ?: emptyList())
+                is Resource.Success -> {
+                    currentProviders = result.data ?: emptyList()
+                    applySorting()
+                }
                 is Resource.Error -> _uiState.value = UiState.Error(result.message ?: "Error desconocido")
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun toggleSort() {
+        _sortByRating.value = !_sortByRating.value
+        applySorting()
+    }
+
+    private fun applySorting() {
+        val sortedList = if (_sortByRating.value) {
+            currentProviders.sortedByDescending { it.calificacion }
+        } else {
+            currentProviders
+        }
+        _uiState.value = UiState.Success(sortedList)
     }
 }

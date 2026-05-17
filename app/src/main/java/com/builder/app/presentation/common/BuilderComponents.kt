@@ -18,10 +18,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.builder.app.core.ui.theme.*
 import com.builder.app.domain.model.EstadoServicio
 import com.builder.app.domain.model.Proveedor
@@ -153,25 +155,27 @@ fun BuilderTextField(
     }
 }
 
-// ─── PROVIDER CARD ───────────────────────────────────
+// ─── PROVIDER CARD ───────────────────────────────────────
 @Composable
 fun BuilderProviderCard(
     proveedor: Proveedor,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val catColor = getCategoryColor(proveedor.categoria)
     Card(
         modifier = modifier.fillMaxWidth().clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = DarkSurfaceElevated),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         border = BorderStroke(1.dp, DarkBorder),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            modifier = Modifier.padding(14.dp).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            BuilderAvatar(name = proveedor.nombre, size = 52.dp)
+            // Provider photo
+            BuilderAvatar(name = proveedor.nombre, size = 52.dp, imageUrl = proveedor.fotoUrl)
 
             Spacer(Modifier.width(14.dp))
 
@@ -191,26 +195,50 @@ fun BuilderProviderCard(
                         BuilderVerifiedBadge(compact = true)
                     }
                 }
+                Spacer(Modifier.height(2.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(getCategoryIcon(proveedor.categoria), null, tint = catColor, modifier = Modifier.size(14.dp))
+                    Spacer(Modifier.width(4.dp))
+                    Text(proveedor.categoria, style = MaterialTheme.typography.bodySmall, color = catColor)
+                }
                 Spacer(Modifier.height(4.dp))
-                Text(proveedor.categoria, style = MaterialTheme.typography.bodySmall, color = TextSecondary)
-                Spacer(Modifier.height(6.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     BuilderRatingStars(rating = proveedor.calificacion, size = 13.dp)
                     Spacer(Modifier.width(6.dp))
                     Text("(${proveedor.totalResenas})", style = MaterialTheme.typography.labelSmall, color = TextTertiary)
                 }
+                Spacer(Modifier.height(4.dp))
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Rounded.ThumbUp, null, tint = Success, modifier = Modifier.size(14.dp))
+                        Spacer(Modifier.width(3.dp))
+                        Text("${proveedor.likes}", style = MaterialTheme.typography.labelSmall, color = Success)
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Rounded.ThumbDown, null, tint = Error, modifier = Modifier.size(14.dp))
+                        Spacer(Modifier.width(3.dp))
+                        Text("${proveedor.dislikes}", style = MaterialTheme.typography.labelSmall, color = Error)
+                    }
+                }
             }
 
-            Column(horizontalAlignment = Alignment.End) {
-                Text("$${proveedor.tarifaHora}", style = MaterialTheme.typography.titleSmall,
+            // Category icon + price
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Surface(Modifier.size(36.dp), RoundedCornerShape(10.dp), color = catColor.copy(alpha = 0.12f)) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(getCategoryIcon(proveedor.categoria), null, tint = catColor, modifier = Modifier.size(18.dp))
+                    }
+                }
+                Spacer(Modifier.height(6.dp))
+                Text("$${proveedor.tarifaHora}", style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold, color = Accent)
-                Text("/hora", style = MaterialTheme.typography.labelSmall, color = TextTertiary)
+                Text("/hr", style = MaterialTheme.typography.labelSmall, color = TextTertiary)
             }
         }
     }
 }
 
-// ─── AVATAR ──────────────────────────────────────────
+// ─── AVATAR ──────────────────────────────────────────────
 @Composable
 fun BuilderAvatar(
     name: String,
@@ -226,18 +254,27 @@ fun BuilderAvatar(
             shape = CircleShape,
             color = accentColor.copy(alpha = 0.15f)
         ) {
-            Box(contentAlignment = Alignment.Center) {
-                Text(
-                    text = name.take(1).uppercase(),
-                    style = when {
-                        size >= 80.dp -> MaterialTheme.typography.headlineLarge
-                        size >= 56.dp -> MaterialTheme.typography.headlineSmall
-                        size >= 40.dp -> MaterialTheme.typography.titleMedium
-                        else -> MaterialTheme.typography.labelLarge
-                    },
-                    color = accentColor,
-                    fontWeight = FontWeight.Bold
+            if (!imageUrl.isNullOrBlank()) {
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = name,
+                    modifier = Modifier.fillMaxSize().clip(CircleShape),
+                    contentScale = ContentScale.Crop
                 )
+            } else {
+                Box(contentAlignment = Alignment.Center) {
+                    Text(
+                        text = name.take(1).uppercase(),
+                        style = when {
+                            size >= 80.dp -> MaterialTheme.typography.headlineLarge
+                            size >= 56.dp -> MaterialTheme.typography.headlineSmall
+                            size >= 40.dp -> MaterialTheme.typography.titleMedium
+                            else -> MaterialTheme.typography.labelLarge
+                        },
+                        color = accentColor,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
         if (showOnline) {
@@ -458,4 +495,38 @@ fun getCategoryColor(name: String): Color = when (name.lowercase().take(2)) {
     "al" -> CategoryRed
     "ai" -> CategoryCyan
     else -> CategoryBlue
+}
+
+// ─── BOTTOM NAV ─────────────────────────────────────
+@Composable
+fun BuilderBottomBar(
+    onHomeClick: () -> Unit, onMapClick: () -> Unit,
+    onChatsClick: () -> Unit, onHistoryClick: () -> Unit,
+    onLogout: () -> Unit, selectedIndex: Int = 0,
+    isProvider: Boolean = false
+) {
+    NavigationBar(containerColor = Color.White, tonalElevation = 0.dp, modifier = Modifier.height(72.dp)) {
+        data class NavItem(val label: String, val icon: ImageVector, val onClick: () -> Unit)
+        val items = listOf(
+            NavItem("Inicio", Icons.Rounded.Home, onHomeClick),
+            if (isProvider) NavItem("Dashboard", Icons.Rounded.Analytics, onMapClick)
+            else NavItem("Mapa", Icons.Rounded.Map, onMapClick),
+            NavItem("Mensajes", Icons.Rounded.ChatBubble, onChatsClick),
+            NavItem("Historial", Icons.Rounded.History, onHistoryClick),
+            NavItem("Salir", Icons.Rounded.Logout, onLogout),
+        )
+        items.forEachIndexed { i, item ->
+            NavigationBarItem(
+                selected = selectedIndex == i,
+                onClick = item.onClick,
+                icon = { Icon(item.icon, item.label, Modifier.size(22.dp)) },
+                label = { Text(item.label, style = MaterialTheme.typography.labelSmall, fontWeight = if (selectedIndex == i) FontWeight.Bold else FontWeight.Normal) },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = Accent, selectedTextColor = Accent,
+                    unselectedIconColor = Neutral400, unselectedTextColor = Neutral400,
+                    indicatorColor = AccentSoft
+                )
+            )
+        }
+    }
 }

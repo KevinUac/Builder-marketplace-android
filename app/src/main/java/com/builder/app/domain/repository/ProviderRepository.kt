@@ -9,6 +9,7 @@ interface ProviderRepository {
     fun getProviderProfile(uid: String): Flow<Resource<Proveedor?>>
     fun saveProviderProfile(proveedor: Proveedor): Flow<Resource<Unit>>
     fun getProvidersByCategory(categoria: String): Flow<Resource<List<Proveedor>>>
+    fun getAllProviders(): Flow<Resource<List<Proveedor>>>
     fun getProviderReviews(providerId: String): Flow<Resource<List<Resena>>>
     fun addReview(providerId: String, resena: Resena): Flow<Resource<Unit>>
     suspend fun uploadPortfolioImage(providerId: String, imageUri: android.net.Uri): Resource<String>

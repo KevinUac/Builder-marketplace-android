@@ -38,13 +38,23 @@ data class Proveedor(
     val verificado: Boolean = false,
     val latitud: Double = 0.0,
     val longitud: Double = 0.0,
-    val geohash: String? = null
+    val geohash: String? = null,
+    val fotoUrl: String = "",
+    val likes: Int = 0,
+    val dislikes: Int = 0,
+    val telefono: String = "",
+    val fechaNacimiento: String = "",
+    val anosExperiencia: Int = 0
 )
 
 data class Mensaje(
     val id: String = "",
     val idRemitente: String = "",
     val texto: String = "",
+    val tipo: String = "text",      // "text", "image", "location"
+    val imageUrl: String = "",
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0,
     val timestamp: Long = System.currentTimeMillis()
 )
 

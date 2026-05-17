@@ -58,6 +58,17 @@ class ProviderRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getAllProviders(): Flow<Resource<List<Proveedor>>> = flow {
+        emit(Resource.Loading())
+        try {
+            val snapshot = firestore.collection("proveedores").get().await()
+            val proveedores = snapshot.toObjects(Proveedor::class.java)
+            emit(Resource.Success(proveedores))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "Error al obtener todos los proveedores"))
+        }
+    }
+
     override fun getProviderReviews(providerId: String): Flow<Resource<List<Resena>>> = flow {
         emit(Resource.Loading())
         try {

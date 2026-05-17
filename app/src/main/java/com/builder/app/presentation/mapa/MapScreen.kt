@@ -21,6 +21,10 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 
+import androidx.compose.ui.platform.LocalContext
+import android.content.pm.PackageManager
+import androidx.compose.ui.graphics.Color
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun MapScreen(
@@ -60,6 +64,17 @@ fun MapScreen(
 
     // Filter providers with real coordinates (lat/lng != 0)
     val validProviders = providers.filter { it.latitud != 0.0 && it.longitud != 0.0 }
+
+    val context = LocalContext.current
+    val isKeyMissing = remember {
+        try {
+            val appInfo = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+            val key = appInfo.metaData?.getString("com.google.android.geo.API_KEY")
+            key == null || key == "YOUR_API_KEY_HERE"
+        } catch (e: Exception) {
+            false
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Full-screen map
@@ -141,6 +156,36 @@ fun MapScreen(
                     Spacer(Modifier.height(8.dp))
                     Text("Los proveedores aún no han compartido su ubicación",
                         style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                }
+            }
+        }
+
+        // Missing API Key Warning
+        if (isKeyMissing) {
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(24.dp)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = Error.copy(alpha = 0.9f)
+            ) {
+                Column(Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(Icons.Rounded.Warning, null, tint = Color.White, modifier = Modifier.size(32.dp))
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        "Falta configurar Google Maps",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        "Reemplaza 'YOUR_API_KEY_HERE' en AndroidManifest.xml con una API Key válida de Google Cloud para ver el mapa.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
                 }
             }
         }

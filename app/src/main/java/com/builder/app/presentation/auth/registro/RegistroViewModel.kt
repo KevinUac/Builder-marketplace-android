@@ -1,11 +1,13 @@
 package com.builder.app.presentation.auth.registro
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.builder.app.core.utils.Resource
 import com.builder.app.core.utils.UiState
 import com.builder.app.domain.model.RolUsuario
 import com.builder.app.domain.model.Usuario
+import com.builder.app.domain.repository.AuthRepository
 import com.builder.app.domain.usecase.auth.RegisterUseCase
 import com.builder.app.domain.usecase.auth.UpdateFcmTokenUseCase
 import com.google.firebase.messaging.FirebaseMessaging
@@ -21,18 +23,24 @@ import javax.inject.Inject
 @HiltViewModel
 class RegistroViewModel @Inject constructor(
     private val registerUseCase: RegisterUseCase,
+    private val authRepository: AuthRepository,
     private val updateFcmTokenUseCase: UpdateFcmTokenUseCase
 ) : ViewModel() {
 
     private val _registroState = MutableStateFlow<UiState<Usuario>>(UiState.Idle)
     val registroState: StateFlow<UiState<Usuario>> = _registroState
 
-    fun registrar(email: String, pass: String, nombre: String, rol: RolUsuario) {
-        registerUseCase(email, pass, nombre, rol).onEach { result ->
+    fun registrar(email: String, pass: String, nombre: String, rol: RolUsuario, photoUri: Uri?,
+                  telefono: String = "", fechaNacimiento: String = "", anosExperiencia: Int = 0) {
+        registerUseCase(email, pass, nombre, rol, telefono, fechaNacimiento, anosExperiencia).onEach { result ->
             when (result) {
                 is Resource.Loading -> _registroState.value = UiState.Loading
                 is Resource.Success -> {
-                    _registroState.value = UiState.Success(result.data!!)
+                    val user = result.data!!
+                    if (photoUri != null) {
+                        authRepository.updateProfilePhoto(photoUri)
+                    }
+                    _registroState.value = UiState.Success(user)
                     updateFcmToken()
                 }
                 is Resource.Error -> _registroState.value = UiState.Error(result.message ?: "Error desconocido")

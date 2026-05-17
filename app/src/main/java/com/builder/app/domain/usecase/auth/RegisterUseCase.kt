@@ -7,6 +7,7 @@ import javax.inject.Inject
 class RegisterUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    operator fun invoke(email: String, pass: String, nombre: String, rol: RolUsuario) = 
-        repository.signUp(email, pass, nombre, rol)
+    operator fun invoke(email: String, pass: String, nombre: String, rol: RolUsuario,
+                        telefono: String = "", fechaNacimiento: String = "", anosExperiencia: Int = 0) = 
+        repository.signUp(email, pass, nombre, rol, telefono, fechaNacimiento, anosExperiencia)
 }

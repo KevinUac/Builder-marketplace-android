@@ -3,75 +3,75 @@ package com.builder.app.core.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // ═══════════════════════════════════════════════════════
-// BUILDER — Design System Colors v2
-// More contrast, better readability, premium feel
+// BUILDER — Design System Colors v3
+// White + Orange (#FB9833) — Clean & Professional
 // ═══════════════════════════════════════════════════════
 
-// Primary palette — Deep navy with enough contrast
-val Primary = Color(0xFF1B1F3B)
-val PrimaryLight = Color(0xFF272B4A)
-val PrimaryDark = Color(0xFF111428)
+// Primary palette
+val Primary = Color(0xFF1C1C1E)
+val PrimaryLight = Color(0xFF2C2C2E)
+val PrimaryDark = Color(0xFF000000)
 
-// Accent — Warm coral for CTAs (more premium than pure red)
-val Accent = Color(0xFFFF6B6B)
-val AccentDark = Color(0xFFE85D5D)
-val AccentLight = Color(0xFFFF8787)
-val AccentSoft = Color(0x1AFF6B6B) // 10% opacity for backgrounds
+// Accent — Orange #FB9833
+val Accent = Color(0xFFFB9833)
+val AccentDark = Color(0xFFE8872A)
+val AccentLight = Color(0xFFFFAD5C)
+val AccentSoft = Color(0x1AFB9833)
 
-// Secondary accent — Soft blue for secondary actions
-val SecondaryAccent = Color(0xFF6C63FF)
-val SecondaryAccentSoft = Color(0x1A6C63FF)
+// Secondary accent
+val SecondaryAccent = Color(0xFFFB9833)
+val SecondaryAccentSoft = Color(0x1AFB9833)
 
-// Backgrounds — Not pure black, warmer tones
-val DarkBackground = Color(0xFF13151E)
-val DarkSurface = Color(0xFF1B1F2F)
-val DarkSurfaceElevated = Color(0xFF232738)
-val DarkSurfaceHigh = Color(0xFF2C3044)
+// Backgrounds — White
+val DarkBackground = Color(0xFFF8F9FA)
+val DarkSurface = Color(0xFFFFFFFF)
+val DarkSurfaceElevated = Color(0xFFFFFFFF)
+val DarkSurfaceHigh = Color(0xFFF0F1F5)
 
-val LightBackground = Color(0xFFF7F8FC)
+val LightBackground = Color(0xFFF8F9FA)
 val LightSurface = Color(0xFFFFFFFF)
-val LightSurfaceElevated = Color(0xFFF0F1F7)
+val LightSurfaceElevated = Color(0xFFFFFFFF)
 
-// Text colors — High contrast
-val TextPrimary = Color(0xFFF2F3F7)
-val TextSecondary = Color(0xFFB0B3C5)
-val TextTertiary = Color(0xFF6E7191)
-val TextDisabled = Color(0xFF4A4D65)
+// Text colors — Dark on white
+val TextPrimary = Color(0xFF1C1C1E)
+val TextSecondary = Color(0xFF8E8E93)
+val TextTertiary = Color(0xFFAEAEB2)
+val TextDisabled = Color(0xFFD1D1D6)
 
 // Semantic
-val Success = Color(0xFF4ADE80)
-val SuccessContainer = Color(0xFF1A3328)
-val Warning = Color(0xFFFBBF24)
-val WarningContainer = Color(0xFF33291A)
-val Error = Color(0xFFFF6B6B)
-val ErrorContainer = Color(0xFF331A1A)
+val Success = Color(0xFF34C759)
+val SuccessContainer = Color(0xFFE8F8EE)
+val Warning = Color(0xFFFF9500)
+val WarningContainer = Color(0xFFFFF4E6)
+val Error = Color(0xFFFF3B30)
+val ErrorContainer = Color(0xFFFFE5E3)
 
-// Neutrals — Blue-tinted grays for cohesion
-val Neutral50 = Color(0xFFF2F3F7)
-val Neutral100 = Color(0xFFE8E9F0)
-val Neutral200 = Color(0xFFD1D3E0)
-val Neutral300 = Color(0xFFB0B3C5)
-val Neutral400 = Color(0xFF8E91A8)
-val Neutral500 = Color(0xFF6E7191)
-val Neutral600 = Color(0xFF4A4D65)
-val Neutral700 = Color(0xFF353849)
-val Neutral800 = Color(0xFF252838)
-val Neutral900 = Color(0xFF13151E)
+// Neutrals
+val Neutral50 = Color(0xFFF2F2F7)
+val Neutral100 = Color(0xFFE5E5EA)
+val Neutral200 = Color(0xFFD1D1D6)
+val Neutral300 = Color(0xFFC7C7CC)
+val Neutral400 = Color(0xFFAEAEB2)
+val Neutral500 = Color(0xFF8E8E93)
+val Neutral600 = Color(0xFF636366)
+val Neutral700 = Color(0xFF48484A)
+val Neutral800 = Color(0xFF3A3A3C)
+val Neutral900 = Color(0xFF1C1C1E)
 
-// Borders — Visible but subtle
-val DarkBorder = Color(0xFF2E3247)
-val LightBorder = Color(0xFFE0E1EB)
+// Borders
+val DarkBorder = Color(0xFFE5E5EA)
+val LightBorder = Color(0xFFE5E5EA)
 
 // Utility
-val StarGold = Color(0xFFFBBF24)
-val OnlineGreen = Color(0xFF4ADE80)
+val StarGold = Color(0xFFFFCC00)
+val OnlineGreen = Color(0xFF34C759)
 
-// Category accent colors for visual variety
-val CategoryBlue = Color(0xFF60A5FA)
-val CategoryPurple = Color(0xFFA78BFA)
-val CategoryGreen = Color(0xFF4ADE80)
-val CategoryOrange = Color(0xFFFB923C)
-val CategoryPink = Color(0xFFF472B6)
-val CategoryCyan = Color(0xFF22D3EE)
-val CategoryYellow = Color(0xFFFBBF24)
-val CategoryRed = Color(0xFFFF6B6B)
+// Category accent colors
+val CategoryBlue = Color(0xFF007AFF)
+val CategoryPurple = Color(0xFF5856D6)
+val CategoryGreen = Color(0xFF34C759)
+val CategoryOrange = Color(0xFFFB9833)
+val CategoryPink = Color(0xFFFF2D55)
+val CategoryCyan = Color(0xFF5AC8FA)
+val CategoryYellow = Color(0xFFFFCC00)
+val CategoryRed = Color(0xFFFF3B30)

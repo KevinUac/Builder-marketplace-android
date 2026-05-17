@@ -28,8 +28,27 @@ class HomeViewModel @Inject constructor(
     private val _needsProfile = MutableStateFlow(false)
     val needsProfile = _needsProfile.asStateFlow()
 
+    private val _providerCounts = MutableStateFlow<Map<String, Int>>(emptyMap())
+    val providerCounts = _providerCounts.asStateFlow()
+
+    private val _allProviders = MutableStateFlow<List<com.builder.app.domain.model.Proveedor>>(emptyList())
+    val allProviders = _allProviders.asStateFlow()
+
     init {
         checkProviderProfile()
+        loadProviderCounts()
+    }
+
+    private fun loadProviderCounts() {
+        viewModelScope.launch {
+            providerRepository.getAllProviders().collect { resource ->
+                if (resource is com.builder.app.core.utils.Resource.Success) {
+                    val providers = resource.data ?: emptyList()
+                    _allProviders.value = providers
+                    _providerCounts.value = providers.groupingBy { it.categoria }.eachCount()
+                }
+            }
+        }
     }
 
     private fun checkProviderProfile() {

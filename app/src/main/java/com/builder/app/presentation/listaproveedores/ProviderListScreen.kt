@@ -48,16 +48,46 @@ fun ProviderListScreen(
             )
         }
     ) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding)) {
-            when (val state = uiState) {
-                is UiState.Loading -> {
-                    LazyColumn(
-                        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(4) { BuilderProviderCardSkeleton() }
+        Column(Modifier.fillMaxSize().padding(padding)) {
+            val isSorted by viewModel.sortByRating.collectAsState()
+
+            // Sort Filter Chip
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                FilterChip(
+                    selected = isSorted,
+                    onClick = { viewModel.toggleSort() },
+                    label = { Text("Mejor Calificados") },
+                    leadingIcon = { Icon(Icons.Rounded.Star, contentDescription = null, modifier = Modifier.size(16.dp)) },
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = Neutral50,
+                        labelColor = Neutral400,
+                        iconColor = Neutral400,
+                        selectedContainerColor = Accent.copy(alpha = 0.2f),
+                        selectedLabelColor = Accent,
+                        selectedLeadingIconColor = Accent
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = isSorted,
+                        borderColor = DarkBorder,
+                        selectedBorderColor = Accent
+                    )
+                )
+            }
+
+            Box(Modifier.fillMaxSize()) {
+                when (val state = uiState) {
+                    is UiState.Loading -> {
+                        LazyColumn(
+                            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(4) { BuilderProviderCardSkeleton() }
+                        }
                     }
-                }
                 is UiState.Success -> {
                     if (state.data.isEmpty()) {
                         BuilderEmptyState(
@@ -91,6 +121,7 @@ fun ProviderListScreen(
                 }
                 else -> {}
             }
+        }
         }
     }
 }

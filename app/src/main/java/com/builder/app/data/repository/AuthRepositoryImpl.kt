@@ -24,10 +24,11 @@ class AuthRepositoryImpl @Inject constructor(
         return combine(
             userPreferences.userUid,
             userPreferences.userRole,
-            userPreferences.userName
-        ) { uid, role, name ->
+            userPreferences.userName,
+            userPreferences.userPhotoUrl
+        ) { uid, role, name, photoUrl ->
             if (uid != null && role != null) {
-                Usuario(uid, name ?: "", auth.currentUser?.email ?: "", role)
+                Usuario(uid, name ?: "", auth.currentUser?.email ?: "", role, fotoUrl = photoUrl ?: "")
             } else {
                 null
             }
@@ -52,8 +53,8 @@ class AuthRepositoryImpl @Inject constructor(
                 rol = rol,
                 fotoUrl = doc.getString("fotoUrl") ?: ""
             )
-            
-            userPreferences.saveUserSession(uid, rol, nombre)
+            val fotoUrl = doc.getString("fotoUrl") ?: ""
+            userPreferences.saveUserSession(uid, rol, nombre, fotoUrl)
             emit(Resource.Success(usuario))
         } catch (e: Exception) {
             emit(Resource.Error(e.message ?: "Error al iniciar sesión"))
@@ -64,7 +65,10 @@ class AuthRepositoryImpl @Inject constructor(
         email: String,
         pass: String,
         nombre: String,
-        rol: RolUsuario
+        rol: RolUsuario,
+        telefono: String,
+        fechaNacimiento: String,
+        anosExperiencia: Int
     ): Flow<Resource<Usuario>> = flow {
         emit(Resource.Loading())
         try {
@@ -72,7 +76,19 @@ class AuthRepositoryImpl @Inject constructor(
             val uid = result.user?.uid ?: throw Exception("Error al crear usuario")
             
             val usuario = Usuario(uid, nombre, email, rol)
-            firestore.collection("usuarios").document(uid).set(usuario).await()
+            val userData = hashMapOf<String, Any>(
+                "uid" to uid,
+                "nombre" to nombre,
+                "correo" to email,
+                "rol" to rol.name,
+                "fotoUrl" to ""
+            )
+            if (rol == RolUsuario.PROVEEDOR) {
+                userData["telefono"] = telefono
+                userData["fechaNacimiento"] = fechaNacimiento
+                userData["anosExperiencia"] = anosExperiencia
+            }
+            firestore.collection("usuarios").document(uid).set(userData).await()
             
             userPreferences.saveUserSession(uid, rol, nombre)
             emit(Resource.Success(usuario))
@@ -130,5 +146,9 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Error al subir foto")
         }
+    }
+
+    suspend fun savePhotoLocally(url: String) {
+        userPreferences.savePhotoUrl(url)
     }
 }

@@ -54,7 +54,7 @@ fun SeleccionRolScreen(
         Text(
             text = "BUILDER",
             style = MaterialTheme.typography.headlineMedium,
-            color = Neutral50,
+            color = TextPrimary,
             fontWeight = FontWeight.ExtraBold
         )
 
@@ -63,7 +63,7 @@ fun SeleccionRolScreen(
         Text(
             text = "¿Cómo quieres usar\nBUILDER?",
             style = MaterialTheme.typography.headlineLarge,
-            color = Neutral50,
+            color = TextPrimary,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
@@ -73,7 +73,7 @@ fun SeleccionRolScreen(
         Text(
             text = "Selecciona tu perfil para comenzar",
             style = MaterialTheme.typography.bodyMedium,
-            color = Neutral500
+            color = TextSecondary
         )
 
         Spacer(modifier = Modifier.height(48.dp))
@@ -131,9 +131,9 @@ private fun RoleCard(
                 indication = null
             ) { onClick() },
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = DarkSurfaceElevated),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         border = BorderStroke(1.5.dp, borderColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
             modifier = Modifier
@@ -144,7 +144,7 @@ private fun RoleCard(
             Surface(
                 modifier = Modifier.size(52.dp),
                 shape = RoundedCornerShape(14.dp),
-                color = DarkSurfaceHigh
+                color = Accent.copy(alpha = 0.1f)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
@@ -162,14 +162,14 @@ private fun RoleCard(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
-                    color = Neutral50,
+                    color = TextPrimary,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Neutral500,
+                    color = TextSecondary,
                     maxLines = 2
                 )
             }

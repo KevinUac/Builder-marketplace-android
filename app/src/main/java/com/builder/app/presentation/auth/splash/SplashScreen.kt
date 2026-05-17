@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,7 +59,7 @@ fun SplashScreen(
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
-                    colors = listOf(DarkBackground, Primary)
+                    colors = listOf(Accent, AccentDark)
                 )
             ),
         contentAlignment = Alignment.Center
@@ -76,7 +77,7 @@ fun SplashScreen(
                     letterSpacing = (-2).sp
                 ),
                 fontWeight = FontWeight.ExtraBold,
-                color = Neutral50
+                color = Color.White
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -84,7 +85,7 @@ fun SplashScreen(
             Text(
                 text = "Tu servicio, a un toque",
                 style = MaterialTheme.typography.bodyLarge,
-                color = Neutral500,
+                color = Color.White.copy(alpha = 0.8f),
                 modifier = Modifier.alpha(taglineAlpha)
             )
         }
@@ -98,7 +99,7 @@ fun SplashScreen(
                 .height(3.dp)
                 .alpha(taglineAlpha)
                 .background(
-                    color = Accent,
+                    color = Color.White,
                     shape = MaterialTheme.shapes.extraLarge
                 )
         )

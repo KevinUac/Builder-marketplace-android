@@ -105,7 +105,7 @@ fun ProviderProfileScreen(
                         Icon(
                             Icons.Rounded.ArrowBack,
                             contentDescription = "Volver",
-                            tint = Neutral50
+                            tint = TextPrimary
                         )
                     }
                 },
@@ -119,7 +119,7 @@ fun ProviderProfileScreen(
             when (val state = uiState) {
                 is UiState.Success -> {
                     Surface(
-                        color = DarkSurface,
+                        color = Color.White,
                         tonalElevation = 0.dp,
                         border = BorderStroke(1.dp, DarkBorder)
                     ) {
@@ -209,7 +209,7 @@ fun ProviderProfileContent(
                         text = proveedor.nombre,
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
-                        color = Neutral50
+                        color = TextPrimary
                     )
                     if (proveedor.verificado) {
                         Spacer(modifier = Modifier.width(8.dp))
@@ -276,7 +276,7 @@ fun ProviderProfileContent(
                     Surface(
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.size(160.dp),
-                        color = DarkSurfaceElevated
+                        color = Neutral100
                     ) {
                         AsyncImage(
                             model = url,
@@ -304,7 +304,7 @@ fun ProviderProfileContent(
                 proveedor.habilidades.forEach { habilidad ->
                     Surface(
                         shape = RoundedCornerShape(999.dp),
-                        color = DarkSurfaceElevated,
+                        color = Neutral100,
                         border = BorderStroke(1.dp, DarkBorder)
                     ) {
                         Text(
@@ -372,9 +372,9 @@ fun ReviewItem(resena: Resena) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = DarkSurfaceElevated),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         border = BorderStroke(1.dp, DarkBorder),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -392,7 +392,7 @@ fun ReviewItem(resena: Resena) {
                         resena.nombreCliente,
                         fontWeight = FontWeight.SemiBold,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Neutral50
+                        color = TextPrimary
                     )
                 }
                 BuilderRatingStars(rating = resena.calificacion, size = 14.dp)
@@ -416,7 +416,7 @@ fun ProfileStat(
     value: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector? = null,
     iconTint: androidx.compose.ui.graphics.Color = Accent,
-    valueColor: androidx.compose.ui.graphics.Color = Neutral50
+    valueColor: androidx.compose.ui.graphics.Color = TextPrimary
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -456,9 +456,9 @@ fun AddReviewDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = DarkSurface,
-        titleContentColor = Neutral50,
-        textContentColor = Neutral300,
+        containerColor = Color.White,
+        titleContentColor = TextPrimary,
+        textContentColor = TextSecondary,
         shape = RoundedCornerShape(20.dp),
         title = {
             Text(
@@ -518,9 +518,9 @@ fun ServiceRequestDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = DarkSurface,
-        titleContentColor = Neutral50,
-        textContentColor = Neutral300,
+        containerColor = Color.White,
+        titleContentColor = TextPrimary,
+        textContentColor = TextSecondary,
         shape = RoundedCornerShape(20.dp),
         title = {
             Text(

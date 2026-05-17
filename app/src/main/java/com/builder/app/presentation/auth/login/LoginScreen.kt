@@ -50,7 +50,7 @@ fun LoginScreen(
         Text(
             text = "Bienvenido",
             style = MaterialTheme.typography.headlineLarge,
-            color = Neutral50,
+            color = TextPrimary,
             fontWeight = FontWeight.Bold
         )
 
