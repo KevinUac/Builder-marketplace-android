@@ -133,4 +133,26 @@ class ProviderRepositoryImpl @Inject constructor(
             Resource.Error(e.message ?: "Error al subir imagen")
         }
     }
+
+    override fun likeProvider(providerId: String): Flow<Resource<Unit>> = flow {
+        emit(Resource.Loading())
+        try {
+            firestore.collection("proveedores").document(providerId)
+                .update("likes", com.google.firebase.firestore.FieldValue.increment(1)).await()
+            emit(Resource.Success(Unit))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "Error al dar me gusta"))
+        }
+    }
+
+    override fun dislikeProvider(providerId: String): Flow<Resource<Unit>> = flow {
+        emit(Resource.Loading())
+        try {
+            firestore.collection("proveedores").document(providerId)
+                .update("dislikes", com.google.firebase.firestore.FieldValue.increment(1)).await()
+            emit(Resource.Success(Unit))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "Error al dar no me gusta"))
+        }
+    }
 }

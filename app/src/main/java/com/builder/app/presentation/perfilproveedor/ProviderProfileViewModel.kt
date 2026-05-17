@@ -119,4 +119,20 @@ class ProviderProfileViewModel @Inject constructor(
             serviceRepository.createService(servicio).collect { /* handle result */ }
         }
     }
+
+    fun likeProvider(providerId: String) {
+        providerRepository.likeProvider(providerId).onEach { result ->
+            if (result is Resource.Success) {
+                loadProviderProfile(providerId)
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun dislikeProvider(providerId: String) {
+        providerRepository.dislikeProvider(providerId).onEach { result ->
+            if (result is Resource.Success) {
+                loadProviderProfile(providerId)
+            }
+        }.launchIn(viewModelScope)
+    }
 }

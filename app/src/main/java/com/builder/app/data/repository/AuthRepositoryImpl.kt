@@ -139,8 +139,17 @@ class AuthRepositoryImpl @Inject constructor(
             imageRef.putFile(photoUri).await()
             val downloadUrl = imageRef.downloadUrl.await().toString()
             
-            firestore.collection("usuarios").document(uid)
-                .update("fotoUrl", downloadUrl).await()
+            val userDoc = firestore.collection("usuarios").document(uid).get().await()
+            val rolString = userDoc.getString("rol") ?: "CLIENTE"
+            
+            val batch = firestore.batch()
+            batch.update(firestore.collection("usuarios").document(uid), "fotoUrl", downloadUrl)
+            
+            if (rolString == "PROVEEDOR") {
+                batch.update(firestore.collection("proveedores").document(uid), "fotoUrl", downloadUrl)
+            }
+            
+            batch.commit().await()
             
             Resource.Success(downloadUrl)
         } catch (e: Exception) {

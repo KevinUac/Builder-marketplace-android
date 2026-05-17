@@ -57,11 +57,7 @@ fun SplashScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(Accent, AccentDark)
-                )
-            ),
+            .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -70,14 +66,11 @@ fun SplashScreen(
                 .scale(scaleAnim)
                 .alpha(alphaAnim)
         ) {
-            Text(
-                text = "BUILDER",
-                style = MaterialTheme.typography.displayLarge.copy(
-                    fontSize = 42.sp,
-                    letterSpacing = (-2).sp
-                ),
-                fontWeight = FontWeight.ExtraBold,
-                color = Color.White
+            androidx.compose.foundation.Image(
+                painter = androidx.compose.ui.res.painterResource(id = com.builder.app.R.drawable.logo_builder),
+                contentDescription = "Builder Logo",
+                modifier = Modifier.width(220.dp),
+                contentScale = androidx.compose.ui.layout.ContentScale.Fit
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -85,7 +78,7 @@ fun SplashScreen(
             Text(
                 text = "Tu servicio, a un toque",
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color.White.copy(alpha = 0.8f),
+                color = TextSecondary,
                 modifier = Modifier.alpha(taglineAlpha)
             )
         }
@@ -99,7 +92,7 @@ fun SplashScreen(
                 .height(3.dp)
                 .alpha(taglineAlpha)
                 .background(
-                    color = Color.White,
+                    color = Accent,
                     shape = MaterialTheme.shapes.extraLarge
                 )
         )

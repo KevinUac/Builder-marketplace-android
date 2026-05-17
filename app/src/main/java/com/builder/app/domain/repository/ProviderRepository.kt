@@ -13,4 +13,6 @@ interface ProviderRepository {
     fun getProviderReviews(providerId: String): Flow<Resource<List<Resena>>>
     fun addReview(providerId: String, resena: Resena): Flow<Resource<Unit>>
     suspend fun uploadPortfolioImage(providerId: String, imageUri: android.net.Uri): Resource<String>
+    fun likeProvider(providerId: String): Flow<Resource<Unit>>
+    fun dislikeProvider(providerId: String): Flow<Resource<Unit>>
 }

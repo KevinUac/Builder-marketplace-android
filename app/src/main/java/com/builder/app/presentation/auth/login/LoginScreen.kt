@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -37,21 +38,21 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkBackground)
+            .background(Color.White)
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(horizontal = 24.dp)
             .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(80.dp))
+        Spacer(modifier = Modifier.height(60.dp))
 
-        // Header
-        Text(
-            text = "Bienvenido",
-            style = MaterialTheme.typography.headlineLarge,
-            color = TextPrimary,
-            fontWeight = FontWeight.Bold
+        // Header Logo
+        androidx.compose.foundation.Image(
+            painter = androidx.compose.ui.res.painterResource(id = com.builder.app.R.drawable.logo_builder),
+            contentDescription = "Builder Logo",
+            modifier = Modifier.height(48.dp),
+            contentScale = androidx.compose.ui.layout.ContentScale.Fit
         )
 
         Spacer(modifier = Modifier.height(8.dp))

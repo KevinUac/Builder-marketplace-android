@@ -2,6 +2,7 @@ package com.builder.app.presentation.inicio
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -84,8 +85,15 @@ fun HomeScreen(
                                 // Header
                                 Column(
                                     modifier = Modifier.fillMaxWidth().statusBarsPadding()
-                                        .padding(horizontal = 24.dp).padding(top = 20.dp, bottom = 24.dp)
+                                        .padding(horizontal = 24.dp).padding(top = 8.dp, bottom = 24.dp)
                                 ) {
+                                    Image(
+                                        painter = androidx.compose.ui.res.painterResource(id = com.builder.app.R.drawable.logo_builder),
+                                        contentDescription = "Builder Logo",
+                                        modifier = Modifier.height(28.dp),
+                                        contentScale = androidx.compose.ui.layout.ContentScale.Fit
+                                    )
+                                    Spacer(Modifier.height(16.dp))
                                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                                         Column {
                                             Text("Hola, ${currentUser.nombre.split(" ").first()} 👋", style = MaterialTheme.typography.headlineSmall, color = TextPrimary, fontWeight = FontWeight.Bold)
@@ -132,8 +140,15 @@ fun ClientHomeContent(
         // Header
         Column(
             modifier = Modifier.fillMaxWidth().statusBarsPadding()
-                .padding(horizontal = 24.dp).padding(top = 20.dp, bottom = 16.dp)
+                .padding(horizontal = 24.dp).padding(top = 8.dp, bottom = 16.dp)
         ) {
+            Image(
+                painter = androidx.compose.ui.res.painterResource(id = com.builder.app.R.drawable.logo_builder),
+                contentDescription = "Builder Logo",
+                modifier = Modifier.height(28.dp),
+                contentScale = androidx.compose.ui.layout.ContentScale.Fit
+            )
+            Spacer(Modifier.height(16.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                 Column {
                     Text("Hola, ${currentUser.nombre.split(" ").first()} 👋", style = MaterialTheme.typography.headlineSmall, color = TextPrimary, fontWeight = FontWeight.Bold)

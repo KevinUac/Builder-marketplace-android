@@ -132,7 +132,7 @@ fun RegistroScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(DarkBackground)
+            .background(Color.White)
             .statusBarsPadding()
             .navigationBarsPadding()
             .verticalScroll(rememberScrollState())
@@ -140,11 +140,17 @@ fun RegistroScreen(
             .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(40.dp))
+        androidx.compose.foundation.Image(
+            painter = androidx.compose.ui.res.painterResource(id = com.builder.app.R.drawable.logo_builder),
+            contentDescription = "Builder Logo",
+            modifier = Modifier.height(40.dp),
+            contentScale = androidx.compose.ui.layout.ContentScale.Fit
+        )
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text("Crea tu cuenta", style = MaterialTheme.typography.headlineMedium, color = TextPrimary, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Únete a la comunidad BUILDER", style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
+        Text("Únete a la comunidad", style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
 
         Spacer(modifier = Modifier.height(32.dp))
 

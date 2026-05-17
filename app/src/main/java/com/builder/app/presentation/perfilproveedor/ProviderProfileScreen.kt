@@ -161,7 +161,9 @@ fun ProviderProfileScreen(
                     ProviderProfileContent(
                         proveedor = state.data,
                         reviewsState = reviewsState,
-                        onAddReviewClick = { showReviewDialog = true }
+                        onAddReviewClick = { showReviewDialog = true },
+                        onLikeClick = { viewModel.likeProvider(state.data.uid) },
+                        onDislikeClick = { viewModel.dislikeProvider(state.data.uid) }
                     )
                 }
                 is UiState.Error -> {
@@ -183,7 +185,9 @@ fun ProviderProfileScreen(
 fun ProviderProfileContent(
     proveedor: Proveedor,
     reviewsState: UiState<List<Resena>>,
-    onAddReviewClick: () -> Unit
+    onAddReviewClick: () -> Unit,
+    onLikeClick: () -> Unit,
+    onDislikeClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -259,6 +263,27 @@ fun ProviderProfileContent(
                 label = "Tarifa",
                 value = "$${proveedor.tarifaHora}/h",
                 valueColor = Accent
+            )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // ─── Interaction Buttons (Like / Dislike) ────
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            BuilderButton(
+                text = "Me gusta (${proveedor.likes})",
+                onClick = onLikeClick,
+                modifier = Modifier.weight(1f),
+                icon = Icons.Rounded.ThumbUp
+            )
+            BuilderGhostButton(
+                text = "No me gusta (${proveedor.dislikes})",
+                onClick = onDislikeClick,
+                modifier = Modifier.weight(1f),
+                icon = Icons.Rounded.ThumbDown
             )
         }
 
