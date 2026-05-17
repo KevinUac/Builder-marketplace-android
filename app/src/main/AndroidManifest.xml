@@ -30,7 +30,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_API_KEY_HERE" />
+            android:value="AIzaSyA8nkJ-DkT3os6YFPSEex68Ch_VPOOHtl8" />
 
         <service
             android:name=".data.messaging.BuilderMessagingService"

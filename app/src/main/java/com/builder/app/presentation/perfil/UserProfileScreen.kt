@@ -3,6 +3,7 @@ package com.builder.app.presentation.perfil
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -38,13 +39,11 @@ fun UserProfileScreen(
     val user by viewModel.userSession.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    var editingName by remember { mutableStateOf(false) }
+    var sheetState by remember { mutableStateOf<ProfileEditSheet>(ProfileEditSheet.None) }
     var newName by remember { mutableStateOf("") }
-    var editingPassword by remember { mutableStateOf(false) }
     var newPassword by remember { mutableStateOf("") }
     var confirmNewPassword by remember { mutableStateOf("") }
     var passwordMessage by remember { mutableStateOf<String?>(null) }
-    var showPhotoOptions by remember { mutableStateOf(false) }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
 
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -68,7 +67,7 @@ fun UserProfileScreen(
         containerColor = Color.White,
         topBar = {
             TopAppBar(
-                title = { Text("Mi Perfil", fontWeight = FontWeight.Bold) },
+                title = { Text("Configuración", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) { Icon(Icons.Rounded.ArrowBack, "Volver") }
                 },
@@ -79,121 +78,168 @@ fun UserProfileScreen(
         }
     ) { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(24.dp),
+            modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Avatar
+            Spacer(Modifier.height(24.dp))
+
+            // ─── Premium Avatar ─────────────────────────────────────────────────────────────
             Box(contentAlignment = Alignment.BottomEnd) {
                 Box(
-                    modifier = Modifier.size(110.dp).clip(CircleShape).background(Neutral100).clickable { showPhotoOptions = true },
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(Neutral50)
+                        .clickable { sheetState = ProfileEditSheet.PhotoOptions },
                     contentAlignment = Alignment.Center
                 ) {
                     val displayUri = photoUri ?: if (user?.fotoUrl?.isNotBlank() == true) Uri.parse(user!!.fotoUrl) else null
                     if (displayUri != null) {
                         AsyncImage(model = displayUri, contentDescription = "Foto de perfil", modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
                     } else {
-                        Text((user?.nombre?.firstOrNull()?.toString() ?: "?").uppercase(), style = MaterialTheme.typography.headlineLarge, color = Accent, fontWeight = FontWeight.Bold)
+                        Text((user?.nombre?.firstOrNull()?.toString() ?: "?").uppercase(), style = MaterialTheme.typography.displaySmall, color = Accent, fontWeight = FontWeight.Bold)
                     }
                 }
-                Surface(modifier = Modifier.size(32.dp), shape = CircleShape, color = Accent) {
+                Surface(
+                    modifier = Modifier.size(36.dp).offset(x = (-4).dp, y = (-4).dp),
+                    shape = CircleShape,
+                    color = Accent,
+                    border = BorderStroke(3.dp, Color.White),
+                    onClick = { sheetState = ProfileEditSheet.PhotoOptions }
+                ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Icon(Icons.Rounded.Edit, null, tint = Color.White, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Rounded.CameraAlt, null, tint = Color.White, modifier = Modifier.size(18.dp))
                     }
                 }
             }
 
             Spacer(Modifier.height(16.dp))
-            Text(user?.nombre ?: "", style = MaterialTheme.typography.titleLarge, color = TextPrimary, fontWeight = FontWeight.Bold)
-            Text(user?.correo ?: "", style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
-            Text(if (user?.rol?.name == "PROVEEDOR") "Proveedor" else "Cliente", style = MaterialTheme.typography.labelMedium, color = Accent)
-
-            Spacer(Modifier.height(32.dp))
-
-            // Settings list in a clean card
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = Neutral50),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            Text(user?.nombre ?: "Cargando...", style = MaterialTheme.typography.headlineSmall, color = TextPrimary, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(4.dp))
+            Surface(
+                shape = RoundedCornerShape(999.dp),
+                color = Accent.copy(alpha = 0.1f)
             ) {
-                Column {
-                    ProfileRow(icon = Icons.Outlined.Person, title = "Nombre completo", value = user?.nombre ?: "", onClick = { editingName = !editingName })
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = DarkBorder)
-                    ProfileRow(icon = Icons.Outlined.Email, title = "Correo electrónico", value = user?.correo ?: "", onClick = {})
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = DarkBorder)
-                    ProfileRow(icon = Icons.Outlined.Lock, title = "Contraseña", value = "••••••••", onClick = { editingPassword = !editingPassword })
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = DarkBorder)
-                    ProfileRow(icon = Icons.Outlined.Badge, title = "Tipo de cuenta", value = if (user?.rol?.name == "PROVEEDOR") "Proveedor" else "Cliente", onClick = {})
-                }
-            }
-
-            // Inline editing
-            if (editingName) {
-                Spacer(Modifier.height(16.dp))
-                BuilderTextField(value = newName, onValueChange = { newName = it }, placeholder = "Nuevo nombre", label = "Nombre", leadingIcon = Icons.Outlined.Person)
-                Spacer(Modifier.height(8.dp))
-                BuilderButton(text = "Guardar nombre", onClick = { viewModel.updateName(newName); editingName = false }, modifier = Modifier.fillMaxWidth(), enabled = newName.isNotBlank())
-            }
-
-            if (editingPassword) {
-                Spacer(Modifier.height(16.dp))
-                BuilderTextField(value = newPassword, onValueChange = { newPassword = it }, placeholder = "Nueva contraseña", label = "Nueva contraseña", leadingIcon = Icons.Outlined.Lock, visualTransformation = PasswordVisualTransformation())
-                Spacer(Modifier.height(8.dp))
-                BuilderTextField(value = confirmNewPassword, onValueChange = { confirmNewPassword = it }, placeholder = "Confirmar contraseña", label = "Confirmar", leadingIcon = Icons.Outlined.Lock, visualTransformation = PasswordVisualTransformation())
-                if (passwordMessage != null) {
-                    Spacer(Modifier.height(4.dp))
-                    Text(passwordMessage!!, style = MaterialTheme.typography.labelSmall, color = if (passwordMessage!!.contains("actualizada")) Success else Error)
-                }
-                Spacer(Modifier.height(8.dp))
-                BuilderButton(
-                    text = "Cambiar contraseña",
-                    onClick = {
-                        viewModel.updatePassword(newPassword) { ok, msg ->
-                            passwordMessage = msg
-                            if (ok) { editingPassword = false; newPassword = ""; confirmNewPassword = "" }
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = newPassword.length >= 6 && newPassword == confirmNewPassword
+                Text(
+                    text = if (user?.rol?.name == "PROVEEDOR") "Perfil de Proveedor" else "Perfil de Cliente",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Accent,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                 )
             }
 
-            if (isLoading) {
+            Spacer(Modifier.height(32.dp))
+
+            // ─── Settings Groups ─────────────────────────────────────────────────────────────
+            Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp)) {
+                Text("Cuenta", style = MaterialTheme.typography.titleSmall, color = TextSecondary, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(12.dp))
+                SettingsCard {
+                    ProfileRow(icon = Icons.Outlined.Person, title = "Nombre completo", value = user?.nombre ?: "", onClick = { newName = user?.nombre ?: ""; sheetState = ProfileEditSheet.EditName })
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = DarkBorder)
+                    ProfileRow(icon = Icons.Outlined.Email, title = "Correo electrónico", value = user?.correo ?: "", onClick = {})
+                }
+
                 Spacer(Modifier.height(24.dp))
+                Text("Seguridad", style = MaterialTheme.typography.titleSmall, color = TextSecondary, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(12.dp))
+                SettingsCard {
+                    ProfileRow(icon = Icons.Outlined.Lock, title = "Contraseña", value = "••••••••", onClick = { newPassword = ""; confirmNewPassword = ""; passwordMessage = null; sheetState = ProfileEditSheet.EditPassword })
+                }
+            }
+
+            if (isLoading) {
+                Spacer(Modifier.height(32.dp))
                 CircularProgressIndicator(color = Accent, modifier = Modifier.size(32.dp))
             }
+
+            Spacer(Modifier.height(48.dp))
         }
     }
 
-    // Photo Options Bottom Sheet
-    if (showPhotoOptions) {
+    // ─── Bottom Sheets for Modals ──────────────────────────────────────────────────
+    if (sheetState != ProfileEditSheet.None) {
         ModalBottomSheet(
-            onDismissRequest = { showPhotoOptions = false },
+            onDismissRequest = { sheetState = ProfileEditSheet.None },
             containerColor = Color.White,
             shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-            dragHandle = null
+            dragHandle = { BottomSheetDefaults.DragHandle() }
         ) {
-            Column(Modifier.padding(horizontal = 24.dp, vertical = 16.dp)) {
-                Text("Cambiar foto de perfil", style = MaterialTheme.typography.titleMedium, color = TextPrimary, fontWeight = FontWeight.Bold)
-                Spacer(Modifier.height(16.dp))
-                Surface(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp), color = Neutral50, onClick = { showPhotoOptions = false; cameraLauncher.launch(tempImageUri) }) {
-                    Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Outlined.CameraAlt, null, tint = Accent)
-                        Spacer(Modifier.width(16.dp))
-                        Text("Tomar foto", color = TextPrimary, style = MaterialTheme.typography.bodyLarge)
+            Column(Modifier.padding(horizontal = 24.dp, vertical = 8.dp).padding(bottom = 32.dp).imePadding()) {
+                when (sheetState) {
+                    ProfileEditSheet.PhotoOptions -> {
+                        Text("Actualizar foto", style = MaterialTheme.typography.titleLarge, color = TextPrimary, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(24.dp))
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                            Surface(modifier = Modifier.weight(1f).height(100.dp), shape = RoundedCornerShape(16.dp), color = Neutral50, onClick = { sheetState = ProfileEditSheet.None; cameraLauncher.launch(tempImageUri) }) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                                    Icon(Icons.Outlined.CameraAlt, null, tint = Accent, modifier = Modifier.size(32.dp))
+                                    Spacer(Modifier.height(8.dp))
+                                    Text("Cámara", color = TextPrimary, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                                }
+                            }
+                            Surface(modifier = Modifier.weight(1f).height(100.dp), shape = RoundedCornerShape(16.dp), color = Neutral50, onClick = { sheetState = ProfileEditSheet.None; galleryLauncher.launch("image/*") }) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                                    Icon(Icons.Outlined.PhotoLibrary, null, tint = Accent, modifier = Modifier.size(32.dp))
+                                    Spacer(Modifier.height(8.dp))
+                                    Text("Galería", color = TextPrimary, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                                }
+                            }
+                        }
                     }
-                }
-                Spacer(Modifier.height(8.dp))
-                Surface(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp), color = Neutral50, onClick = { showPhotoOptions = false; galleryLauncher.launch("image/*") }) {
-                    Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Outlined.PhotoLibrary, null, tint = Accent)
-                        Spacer(Modifier.width(16.dp))
-                        Text("Elegir de galería", color = TextPrimary, style = MaterialTheme.typography.bodyLarge)
+                    ProfileEditSheet.EditName -> {
+                        Text("Cambiar nombre", style = MaterialTheme.typography.titleLarge, color = TextPrimary, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(8.dp))
+                        Text("Ingresa tu nuevo nombre completo.", style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
+                        Spacer(Modifier.height(24.dp))
+                        BuilderTextField(value = newName, onValueChange = { newName = it }, placeholder = "Tu nombre", label = "Nombre completo", leadingIcon = Icons.Outlined.Person)
+                        Spacer(Modifier.height(24.dp))
+                        BuilderButton(text = "Guardar cambios", onClick = { viewModel.updateName(newName); sheetState = ProfileEditSheet.None }, modifier = Modifier.fillMaxWidth(), enabled = newName.isNotBlank() && newName != user?.nombre)
                     }
+                    ProfileEditSheet.EditPassword -> {
+                        Text("Actualizar contraseña", style = MaterialTheme.typography.titleLarge, color = TextPrimary, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(8.dp))
+                        Text("Asegúrate de usar al menos 6 caracteres.", style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
+                        Spacer(Modifier.height(24.dp))
+                        BuilderTextField(value = newPassword, onValueChange = { newPassword = it }, placeholder = "Nueva contraseña", label = "Nueva contraseña", leadingIcon = Icons.Outlined.Lock, visualTransformation = PasswordVisualTransformation())
+                        Spacer(Modifier.height(16.dp))
+                        BuilderTextField(value = confirmNewPassword, onValueChange = { confirmNewPassword = it }, placeholder = "Confirmar", label = "Confirmar contraseña", leadingIcon = Icons.Outlined.Lock, visualTransformation = PasswordVisualTransformation())
+                        if (passwordMessage != null) {
+                            Spacer(Modifier.height(8.dp))
+                            Text(passwordMessage!!, style = MaterialTheme.typography.labelSmall, color = if (passwordMessage!!.contains("actualizada")) Success else Error)
+                        }
+                        Spacer(Modifier.height(24.dp))
+                        BuilderButton(
+                            text = "Cambiar contraseña",
+                            onClick = {
+                                viewModel.updatePassword(newPassword) { ok, msg ->
+                                    passwordMessage = msg
+                                    if (ok) { sheetState = ProfileEditSheet.None }
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            enabled = newPassword.length >= 6 && newPassword == confirmNewPassword
+                        )
+                    }
+                    else -> {}
                 }
-                Spacer(Modifier.height(24.dp))
             }
         }
+    }
+}
+
+enum class ProfileEditSheet { None, PhotoOptions, EditName, EditPassword }
+
+@Composable
+private fun SettingsCard(content: @Composable ColumnScope.() -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Neutral50),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, DarkBorder)
+    ) {
+        Column(content = content)
     }
 }
 
@@ -210,20 +256,22 @@ private fun ProfileRow(
         onClick = onClick
     ) {
         Row(
-            Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+            Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Surface(Modifier.size(36.dp), RoundedCornerShape(8.dp), color = Accent.copy(alpha = 0.1f)) {
+            Surface(Modifier.size(40.dp), RoundedCornerShape(10.dp), color = Color.White, border = BorderStroke(1.dp, DarkBorder)) {
                 Box(contentAlignment = Alignment.Center) {
-                    Icon(icon, null, tint = Accent, modifier = Modifier.size(18.dp))
+                    Icon(icon, null, tint = TextPrimary, modifier = Modifier.size(20.dp))
                 }
             }
-            Spacer(Modifier.width(14.dp))
+            Spacer(Modifier.width(16.dp))
             Column(Modifier.weight(1f)) {
                 Text(title, style = MaterialTheme.typography.labelSmall, color = TextSecondary)
                 Text(value, style = MaterialTheme.typography.bodyLarge, color = TextPrimary, fontWeight = FontWeight.Medium)
             }
-            Icon(Icons.Rounded.ChevronRight, null, tint = Neutral400, modifier = Modifier.size(20.dp))
+            if (title != "Correo electrónico") {
+                Icon(Icons.Rounded.ChevronRight, null, tint = Neutral400, modifier = Modifier.size(20.dp))
+            }
         }
     }
 }

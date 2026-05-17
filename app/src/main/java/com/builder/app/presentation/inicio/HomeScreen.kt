@@ -209,7 +209,7 @@ fun ClientHomeContent(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(filteredProviders) { proveedor ->
-                    ProviderHomeCard(proveedor = proveedor, onClick = { onNavigateToProvider(proveedor.uid) })
+                    ProviderHomeCard(proveedor = proveedor, currentUserId = currentUser.uid, onClick = { onNavigateToProvider(proveedor.uid) })
                 }
                 item { Spacer(Modifier.height(80.dp)) }
             }
@@ -222,7 +222,7 @@ fun ClientHomeContent(
 // ═══════════════════════════════════════════════════════
 
 @Composable
-fun ProviderHomeCard(proveedor: Proveedor, onClick: () -> Unit) {
+fun ProviderHomeCard(proveedor: Proveedor, currentUserId: String, onClick: () -> Unit) {
     val catColor = getCategoryColor(proveedor.categoria)
 
     Card(
@@ -241,7 +241,11 @@ fun ProviderHomeCard(proveedor: Proveedor, onClick: () -> Unit) {
 
                 Column(Modifier.weight(1f)) {
                     Text(proveedor.nombre, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = TextPrimary)
-                    if (proveedor.anosExperiencia > 0) {
+                    val currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
+                    val age = proveedor.fechaNacimiento.takeLast(4).toIntOrNull()?.let { currentYear - it }
+                    if (age != null) {
+                        Text("$age Años", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = TextSecondary)
+                    } else if (proveedor.anosExperiencia > 0) {
                         Text("${proveedor.anosExperiencia} Años", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = TextSecondary)
                     } else {
                         Text("Nuevo", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = Accent)
@@ -267,17 +271,15 @@ fun ProviderHomeCard(proveedor: Proveedor, onClick: () -> Unit) {
                 Spacer(Modifier.width(16.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Rounded.ThumbUp, null, tint = Neutral600, modifier = Modifier.size(16.dp))
-                    Spacer(Modifier.width(4.dp))
-                    Text("${proveedor.likedBy.size}", style = MaterialTheme.typography.bodySmall, color = Neutral600)
+                    val likeTint = if (proveedor.likedBy.contains(currentUserId)) Accent else Neutral400
+                    Icon(Icons.Rounded.ThumbUp, null, tint = likeTint, modifier = Modifier.size(18.dp))
                 }
 
-                Spacer(Modifier.width(12.dp))
+                Spacer(Modifier.width(16.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Rounded.ThumbDown, null, tint = Neutral600, modifier = Modifier.size(16.dp))
-                    Spacer(Modifier.width(4.dp))
-                    Text("${proveedor.dislikedBy.size}", style = MaterialTheme.typography.bodySmall, color = Neutral600)
+                    val dislikeTint = if (proveedor.dislikedBy.contains(currentUserId)) Accent else Neutral400
+                    Icon(Icons.Rounded.ThumbDown, null, tint = dislikeTint, modifier = Modifier.size(18.dp))
                 }
 
                 Spacer(Modifier.weight(1f))
