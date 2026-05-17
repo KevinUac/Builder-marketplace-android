@@ -73,13 +73,13 @@ fun ChatScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Rounded.ArrowBack, contentDescription = "Volver", tint = Neutral50)
+                        Icon(Icons.Rounded.ArrowBack, contentDescription = "Volver", tint = TextPrimary)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     BuilderAvatar(name = "Chat", size = 40.dp, showOnline = true)
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
-                        Text("Chat", style = MaterialTheme.typography.titleMedium, color = Neutral50, fontWeight = FontWeight.Bold)
+                        Text("Chat", style = MaterialTheme.typography.titleMedium, color = TextPrimary, fontWeight = FontWeight.Bold)
                         Text("En línea", style = MaterialTheme.typography.labelSmall, color = OnlineGreen)
                     }
                 }
@@ -156,7 +156,7 @@ fun ChatScreen(
                                 colors = TextFieldDefaults.colors(
                                     focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent,
                                     focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent,
-                                    cursorColor = Accent, focusedTextColor = Neutral50, unfocusedTextColor = Neutral50
+                                    cursorColor = Accent, focusedTextColor = TextPrimary, unfocusedTextColor = TextPrimary
                                 ),
                                 textStyle = MaterialTheme.typography.bodyMedium, singleLine = false, maxLines = 4
                             )

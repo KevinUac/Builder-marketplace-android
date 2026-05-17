@@ -9,6 +9,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -58,15 +59,19 @@ class ProviderRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getAllProviders(): Flow<Resource<List<Proveedor>>> = flow {
-        emit(Resource.Loading())
-        try {
-            val snapshot = firestore.collection("proveedores").get().await()
-            val proveedores = snapshot.toObjects(Proveedor::class.java)
-            emit(Resource.Success(proveedores))
-        } catch (e: Exception) {
-            emit(Resource.Error(e.message ?: "Error al obtener todos los proveedores"))
+    override fun getAllProviders(): Flow<Resource<List<Proveedor>>> = kotlinx.coroutines.flow.callbackFlow {
+        trySend(Resource.Loading())
+        val subscription = firestore.collection("proveedores").addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                trySend(Resource.Error(error.message ?: "Error al obtener todos los proveedores"))
+                return@addSnapshotListener
+            }
+            if (snapshot != null) {
+                val proveedores = snapshot.toObjects(Proveedor::class.java)
+                trySend(Resource.Success(proveedores))
+            }
         }
+        awaitClose { subscription.remove() }
     }
 
     override fun getProviderReviews(providerId: String): Flow<Resource<List<Resena>>> = flow {

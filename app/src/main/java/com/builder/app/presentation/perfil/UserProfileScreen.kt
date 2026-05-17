@@ -65,7 +65,7 @@ fun UserProfileScreen(
     LaunchedEffect(user) { if (newName.isBlank()) newName = user?.nombre ?: "" }
 
     Scaffold(
-        containerColor = DarkBackground,
+        containerColor = Color.White,
         topBar = {
             TopAppBar(
                 title = { Text("Mi Perfil", fontWeight = FontWeight.Bold) },
@@ -73,7 +73,7 @@ fun UserProfileScreen(
                     IconButton(onClick = onBack) { Icon(Icons.Rounded.ArrowBack, "Volver") }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = DarkBackground, titleContentColor = TextPrimary, navigationIconContentColor = TextPrimary
+                    containerColor = Color.White, titleContentColor = TextPrimary, navigationIconContentColor = TextPrimary
                 )
             )
         }
@@ -113,8 +113,8 @@ fun UserProfileScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                colors = CardDefaults.cardColors(containerColor = Neutral50),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
             ) {
                 Column {
                     ProfileRow(icon = Icons.Outlined.Person, title = "Nombre completo", value = user?.nombre ?: "", onClick = { editingName = !editingName })
@@ -169,7 +169,9 @@ fun UserProfileScreen(
     if (showPhotoOptions) {
         ModalBottomSheet(
             onDismissRequest = { showPhotoOptions = false },
-            containerColor = Color.White
+            containerColor = Color.White,
+            shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+            dragHandle = null
         ) {
             Column(Modifier.padding(horizontal = 24.dp, vertical = 16.dp)) {
                 Text("Cambiar foto de perfil", style = MaterialTheme.typography.titleMedium, color = TextPrimary, fontWeight = FontWeight.Bold)

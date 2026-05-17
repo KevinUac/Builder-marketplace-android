@@ -176,6 +176,7 @@ fun RegistroScreen(
             ModalBottomSheet(
                 onDismissRequest = { showPhotoOptions = false },
                 containerColor = Color.White,
+                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
                 dragHandle = null
             ) {
                 Column(Modifier.padding(horizontal = 24.dp, vertical = 16.dp)) {
