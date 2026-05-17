@@ -94,14 +94,51 @@ fun RegistroScreen(
             confirmPassword.isNotBlank() && doPasswordsMatch &&
             nombre.isNotBlank()
 
-    // Phone auto-format: XXX XXX XXXX
-    fun formatPhone(raw: String): String {
-        val digits = raw.filter { it.isDigit() }.take(10)
-        return buildString {
-            digits.forEachIndexed { i, c ->
-                if (i == 3 || i == 6) append(' ')
-                append(c)
+    class PhoneVisualTransformation : VisualTransformation {
+        override fun filter(text: androidx.compose.ui.text.AnnotatedString): androidx.compose.ui.text.input.TransformedText {
+            val digits = text.text.filter { it.isDigit() }
+            var out = ""
+            for (i in digits.indices) {
+                out += digits[i]
+                if (i == 2 || i == 5) out += " "
             }
+            val offsetMapping = object : androidx.compose.ui.text.input.OffsetMapping {
+                override fun originalToTransformed(offset: Int): Int {
+                    if (offset <= 3) return offset
+                    if (offset <= 6) return offset + 1
+                    return offset + 2
+                }
+                override fun transformedToOriginal(offset: Int): Int {
+                    if (offset <= 3) return offset
+                    if (offset <= 7) return offset - 1
+                    return offset - 2
+                }
+            }
+            return androidx.compose.ui.text.input.TransformedText(androidx.compose.ui.text.AnnotatedString(out), offsetMapping)
+        }
+    }
+
+    class DateVisualTransformation : VisualTransformation {
+        override fun filter(text: androidx.compose.ui.text.AnnotatedString): androidx.compose.ui.text.input.TransformedText {
+            val digits = text.text.filter { it.isDigit() }
+            var out = ""
+            for (i in digits.indices) {
+                out += digits[i]
+                if (i == 1 || i == 3) out += "/"
+            }
+            val offsetMapping = object : androidx.compose.ui.text.input.OffsetMapping {
+                override fun originalToTransformed(offset: Int): Int {
+                    if (offset <= 2) return offset
+                    if (offset <= 4) return offset + 1
+                    return offset + 2
+                }
+                override fun transformedToOriginal(offset: Int): Int {
+                    if (offset <= 2) return offset
+                    if (offset <= 5) return offset - 1
+                    return offset - 2
+                }
+            }
+            return androidx.compose.ui.text.input.TransformedText(androidx.compose.ui.text.AnnotatedString(out), offsetMapping)
         }
     }
 
@@ -109,7 +146,7 @@ fun RegistroScreen(
     if (showSuccessDialog) {
         AlertDialog(
             onDismissRequest = {},
-            containerColor = DarkSurfaceElevated,
+            containerColor = Color.White,
             icon = {
                 Surface(Modifier.size(64.dp), CircleShape, color = Success.copy(alpha = 0.15f)) {
                     Box(contentAlignment = Alignment.Center) {
@@ -301,12 +338,13 @@ fun RegistroScreen(
                     value = telefono,
                     onValueChange = { raw ->
                         val digits = raw.filter { it.isDigit() }.take(10)
-                        telefono = formatPhone(digits)
+                        telefono = digits
                     },
                     placeholder = "981 197 9815",
                     label = "Teléfono",
                     leadingIcon = Icons.Outlined.Phone,
-                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone)
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone),
+                    visualTransformation = PhoneVisualTransformation()
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -316,17 +354,13 @@ fun RegistroScreen(
                     value = fechaNacimiento,
                     onValueChange = { raw ->
                         val digits = raw.filter { it.isDigit() }.take(8)
-                        fechaNacimiento = buildString {
-                            digits.forEachIndexed { i, c ->
-                                if (i == 2 || i == 4) append('/')
-                                append(c)
-                            }
-                        }
+                        fechaNacimiento = digits
                     },
                     placeholder = "DD/MM/AAAA",
                     label = "Fecha de nacimiento",
                     leadingIcon = Icons.Outlined.CalendarMonth,
-                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+                    visualTransformation = DateVisualTransformation()
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
