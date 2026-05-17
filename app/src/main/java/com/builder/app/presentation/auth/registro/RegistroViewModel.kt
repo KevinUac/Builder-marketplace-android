@@ -38,12 +38,10 @@ class RegistroViewModel @Inject constructor(
                 is Resource.Success -> {
                     val user = result.data!!
                     if (photoUri != null) {
-                        viewModelScope.launch {
-                            val uploadResult = authRepository.updateProfilePhoto(photoUri)
-                            if (uploadResult is Resource.Success) {
-                                (authRepository as? com.builder.app.data.repository.AuthRepositoryImpl)
-                                    ?.savePhotoLocally(uploadResult.data ?: "")
-                            }
+                        val uploadResult = authRepository.updateProfilePhoto(photoUri)
+                        if (uploadResult is Resource.Success) {
+                            (authRepository as? com.builder.app.data.repository.AuthRepositoryImpl)
+                                ?.savePhotoLocally(uploadResult.data ?: "")
                         }
                     }
                     _registroState.value = UiState.Success(user)
